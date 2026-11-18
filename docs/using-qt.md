@@ -180,6 +180,36 @@ Colors are `Theme.Color.*` (`foreground`, `background`, `accent`, `urgent`, `mut
 
 A few components are built on Qt Quick Controls (`Dropdown`, `NumberField`, `Tooltip`, `MultiSelect`, ...) and draw every part themselves. Under the Basic style nothing else draws underneath them. Under a platform style (Breeze, Fusion, the desktop's) you get its padding, focus frames and scroll indicators mixed in. Set it before the application object exists: `qputenv("QT_QUICK_CONTROLS_STYLE", "Basic")` or `QQuickStyle::setStyle("Basic")` in C++, `os.environ` in Python, or the environment for `qml6` and Quickshell.
 
+### Bind a dropdown to confirmed state
+
+`O.Dropdown` and `O.SearchableDropdown` update their `value` and emit `changed(value)` when a user selects an option. Set `updateValueOnSelection: false` if an app owns the value. In that mode `changed(value)` requests a change and the dropdown keeps the existing binding, so it shows the selection only after the app's model confirms it.
+
+```qml
+O.Dropdown {
+  label: "Audio profile"
+  options: audio.profiles
+  value: audio.activeProfile
+  updateValueOnSelection: false
+  onChanged: function(profile) { audio.requestProfile(profile) }
+}
+```
+
+### Keep a dropdown's value in the application
+
+`Dropdown` and `SearchableDropdown` update `value` when the user selects an option by default. Set
+`updateValueOnSelection: false` when the app owns that value, such as when a settings service
+confirms writes asynchronously. Read `changed(value)` as the selection request and update the
+bound model when the service confirms it.
+
+```qml
+O.Dropdown {
+  options: ["balanced", "performance"]
+  value: settings.confirmedProfile
+  updateValueOnSelection: false
+  onChanged: requested => settings.requestProfile(requested)
+}
+```
+
 ### The theme follows itself
 
 Bind to tokens and the view follows the desktop live, with no restart and no code. `ThemeSource` watches:
