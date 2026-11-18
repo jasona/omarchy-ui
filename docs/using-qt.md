@@ -194,22 +194,6 @@ O.Dropdown {
 }
 ```
 
-### Keep a dropdown's value in the application
-
-`Dropdown` and `SearchableDropdown` update `value` when the user selects an option by default. Set
-`updateValueOnSelection: false` when the app owns that value, such as when a settings service
-confirms writes asynchronously. Read `changed(value)` as the selection request and update the
-bound model when the service confirms it.
-
-```qml
-O.Dropdown {
-  options: ["balanced", "performance"]
-  value: settings.confirmedProfile
-  updateValueOnSelection: false
-  onChanged: requested => settings.requestProfile(requested)
-}
-```
-
 ### The theme follows itself
 
 Bind to tokens and the view follows the desktop live, with no restart and no code. `ThemeSource` watches:
